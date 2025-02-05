@@ -10,13 +10,12 @@ import { z } from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { login } from '@/actions/auth';
 import Link from 'next/link';
-
-
-// import { useTransition } from 'react';
+import { useTransition } from 'react';
+import toast from 'react-hot-toast';
 
 
 export default function Signin() {
-    // const [isPending, startTransition] = useTransition()
+    const [isPending, startTransition] = useTransition()
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -26,7 +25,14 @@ export default function Signin() {
         }
     })
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        login(values)
+        startTransition(() => {
+            login(values).then((data) => {
+                form.reset();
+                if (!data?.success) {
+                    toast.error(data?.message)
+                }
+            })
+        });
 
     }
     return (
@@ -72,7 +78,7 @@ export default function Signin() {
                                     </Link>
                                 </div>
                             </div>
-                            <Button type="submit" className="w-full my-5">
+                            <Button type="submit" className="w-full my-5" disabled={isPending}>
                                 Login
                             </Button>
                         </form>
