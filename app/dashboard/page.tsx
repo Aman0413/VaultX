@@ -1,26 +1,134 @@
-import { auth, signOut } from '@/auth'
+'use client'
+
+
 import { Button } from '@/components/ui/button';
-import React from 'react'
+import React, { useTransition } from 'react'
+import { PlusCircle, } from "lucide-react";
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { z } from 'zod'
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PasswordSchema } from '@/schemas';
+import { useSession } from 'next-auth/react';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { savepassword } from '@/actions/user';
+import toast from 'react-hot-toast';
 
-export default async function Dashboard() {
+export default function Dashboard() {
+    const [isPending, startTransition] = useTransition()
 
-    const session = await auth();
+    const session = useSession();
+
+    const form = useForm<z.infer<typeof PasswordSchema>>({
+        resolver: zodResolver(PasswordSchema),
+        defaultValues: {
+            userId: "",
+            siteName: "",
+            siteURL: "",
+            username: "",
+            password: "",
+        }
+    })
+
+    const onSubmit = (values: z.infer<typeof PasswordSchema>) => {
+        console.log(values);
+        // put email to userId so in backend it fetch userid
+        // const userEmail = session.data?.user?.email || ''
+        // form.setValue('userId', userEmail)
+        // startTransition(() => {
+        //     savepassword(values).then((data) => {
+        //         if (!data?.success) {
+        //             toast.error(data.message)
+        //         }
+        //         if (data.success) {
+        //             toast.success(data.message)
+        //         }
+        //     })
+        // });
+
+    }
+
+
     return (
-        <div>Dashboard Page
+        <div className='container mx-auto p-3'>
+            <div>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Password
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Add New Password</DialogTitle>
+                        </DialogHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit((values) => {
+                                console.log('Form submitted with values:', values);
 
-            <p>
-                {JSON.stringify(session)}
-            </p>
+                            })}>
+                                <div className="space-y-4 py-4">
+                                    <FormField
+                                        control={form.control}
+                                        name='siteName'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Title</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} id="siteName" type="text" placeholder="e.g., Gmail Account" />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
 
-            <form action={async () => {
-                'use server'
-                await signOut()
-            }}>
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='username'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Username/Email</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} id="username" type="text" placeholder="john.doe@example.com" />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
 
-                <Button type='submit'>
-                    Logout
-                </Button>
-            </form>
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='password'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} id="password" type="password" placeholder="*******" />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='siteURL'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>URL</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} id="siteURL" type="text" placeholder="https://example.com" />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <Button type='submit' className="w-full">
+                                    Save Password
+                                </Button>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
     )
 }
