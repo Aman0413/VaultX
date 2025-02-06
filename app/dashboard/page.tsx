@@ -1,8 +1,7 @@
 'use client'
 
-
 import { Button } from '@/components/ui/button';
-import React, { useTransition } from 'react'
+import React, { useEffect, useTransition } from 'react'
 import { PlusCircle, } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -14,6 +13,8 @@ import { useSession } from 'next-auth/react';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { savepassword } from '@/actions/user';
 import toast from 'react-hot-toast';
+import PasswordGrid from '@/components/PasswordGrid';
+
 
 export default function Dashboard() {
     const [isPending, startTransition] = useTransition()
@@ -31,27 +32,33 @@ export default function Dashboard() {
         }
     })
 
-    const onSubmit = (values: z.infer<typeof PasswordSchema>) => {
-        console.log(values);
+    useEffect(() => {
         // put email to userId so in backend it fetch userid
-        // const userEmail = session.data?.user?.email || ''
-        // form.setValue('userId', userEmail)
-        // startTransition(() => {
-        //     savepassword(values).then((data) => {
-        //         if (!data?.success) {
-        //             toast.error(data.message)
-        //         }
-        //         if (data.success) {
-        //             toast.success(data.message)
-        //         }
-        //     })
-        // });
+        if (session.data?.user?.email) {
+            form.setValue('userId', session.data.user.email);
+        }
+    }, [session.data, form]);
+
+    const onSubmit = (values: z.infer<typeof PasswordSchema>) => {
+        // put email to userId so in backend it fetch userid
+        const userEmail = session.data?.user?.email || ''
+        form.setValue('userId', userEmail);
+        startTransition(() => {
+            savepassword(values).then((data) => {
+                form.reset();
+                if (!data?.success) {
+                    toast.error(data.message)
+                }
+                if (data.success) {
+                    toast.success(data.message)
+                }
+            })
+        });
 
     }
 
-
     return (
-        <div className='container mx-auto p-3'>
+        <div className='container mx-auto p-5'>
             <div>
                 <Dialog>
                     <DialogTrigger asChild>
@@ -65,10 +72,7 @@ export default function Dashboard() {
                             <DialogTitle>Add New Password</DialogTitle>
                         </DialogHeader>
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit((values) => {
-                                console.log('Form submitted with values:', values);
-
-                            })}>
+                            <form onSubmit={form.handleSubmit(onSubmit)}>
                                 <div className="space-y-4 py-4">
                                     <FormField
                                         control={form.control}
@@ -121,14 +125,18 @@ export default function Dashboard() {
                                         )}
                                     />
                                 </div>
-                                <Button type='submit' className="w-full">
+                                <Button type='submit' className="w-full" disabled={isPending}>
                                     Save Password
                                 </Button>
                             </form>
                         </Form>
                     </DialogContent>
                 </Dialog>
+
+
             </div>
+
+            <PasswordGrid />
         </div>
     )
 }

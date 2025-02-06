@@ -18,7 +18,7 @@ export const SignupSchema = z.object({
 });
 
 export const PasswordSchema = z.object({
-  userId: z.string().cuid({ message: "Invalid user ID format" }),
+  userId: z.string().optional(),
   siteName: z
     .string()
     .min(2, { message: "Website name must be at least 2 characters long" }),
@@ -26,7 +26,8 @@ export const PasswordSchema = z.object({
     .string()
     .url({ message: "Invalid website URL" })
     .min(2, { message: "Website name must be at least 2 characters long" })
-    .optional(),
+    .optional()
+    .or(z.literal("")),
   username: z
     .string()
     .min(1, { message: "Username must be at least 1 characters long" }),
