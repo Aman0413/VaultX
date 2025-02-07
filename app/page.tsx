@@ -36,7 +36,7 @@ export default function Home() {
               <h1 className="text-6xl md:text-7xl font-bold tracking-tight text-primary mb-6 bg-clip-text  bg-gradient-to-r from-primary to-primary/70 animate-fade-in-up">
                 Vault-X
               </h1>
-              <p className="text-2xl md:text-3xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100 p-5">
+              <p className="text-xl md:text-3xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100 p-5">
                 The most secure way to manage your passwords with
                 <span className="text-primary font-semibold"> military-grade encryption</span>
               </p>
@@ -55,14 +55,14 @@ export default function Home() {
         </header>
 
         {/* Features Section */}
-        <section className="py-32 px-6 lg:px-8 bg-card relative overflow-hidden">
+        <section className="py-5 px-6 lg:px-8 bg-card relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--primary-50),_transparent_100%)]" />
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mb-20">
-              <h2 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
                 Why Choose Vault-X?
               </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
                 Experience the next generation of password management with our cutting-edge features
               </p>
             </div>
@@ -179,10 +179,10 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <Card className="p-8 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-card/50 backdrop-blur-sm border-primary/10">
+    <Card className="p-8 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-card/50 backdrop-blur-sm border-primary/10 flex flex-col justify-center items-center">
       <div className="text-primary mb-6">{icon}</div>
       <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-muted-foreground leading-relaxed">{description}</p>
+      <p className="text-muted-foreground leading-relaxed text-center">{description}</p>
     </Card>
   );
 }
