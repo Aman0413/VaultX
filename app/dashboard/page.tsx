@@ -39,6 +39,8 @@ export default function Dashboard() {
         }
     }, [session.data, form]);
 
+    
+
     const onSubmit = (values: z.infer<typeof PasswordSchema>) => {
         // put email to userId so in backend it fetch userid
         const userEmail = session.data?.user?.email || ''

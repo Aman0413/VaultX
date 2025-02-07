@@ -20,6 +20,9 @@ export default function PasswordGrid() {
         })
     }, [email])
 
+    useEffect(() => {
+    }, [])
+
 
 
     return (

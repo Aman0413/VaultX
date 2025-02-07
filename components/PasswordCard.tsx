@@ -48,7 +48,7 @@ const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }:
     });
 
 
-    const handleCopy = async (text: string, field: keyof PasswordInfo) => {
+    const handleCopy = async (text: string) => {
         try {
             await navigator.clipboard.writeText(text);
 
@@ -132,7 +132,7 @@ const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }:
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCopy(value as string, field)}
+                        onClick={() => handleCopy(value as string)}
                         className="h-8 w-8 ml-4"
                     >
                         <Copy className="h-4 w-4" />
