@@ -18,7 +18,6 @@ export default function PasswordGrid() {
             setLoading(false)
             setCredentials(data.data)
         })
-
     }, [email])
 
 

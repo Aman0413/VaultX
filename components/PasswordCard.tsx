@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Copy, Edit2, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { updateCredentails } from "@/actions/user";
+import toast from "react-hot-toast";
+
+
 
 interface PasswordInfo {
     id: string;
@@ -24,6 +28,9 @@ export interface PasswordInfoCardProps {
 
 const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }: PasswordInfoCardProps) => {
 
+
+    const [isPending, startTransition] = useTransition()
+
     const [passwordInfo, setPasswordInfo] = useState<PasswordInfo>({
         id: id,
         username: username,
@@ -37,7 +44,7 @@ const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }:
         username: "",
         title: "",
         password: "",
-        url: ""
+        url: "",
     });
 
 
@@ -55,12 +62,24 @@ const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }:
     };
 
     const handleSave = () => {
-        if (!isValidUrl(tempValues.url as string)) {
-
-            return;
-        }
-
         setPasswordInfo(tempValues);
+        startTransition(() => {
+
+            updateCredentails(id, {
+                siteName: tempValues.title,
+                username: tempValues.username,
+                password: tempValues.password,
+                userId: userId,
+                siteURL: tempValues.url || ''
+            }, userId).then((data) => {
+                if (!data.success) {
+                    toast.error(data.message)
+                }
+                if (data.success) {
+                    toast.success(data.message)
+                }
+            })
+        })
         setIsEditing(false);
     };
 
@@ -69,14 +88,7 @@ const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }:
         setTempValues({ id: "", username: "", title: "", password: "", url: "" });
     };
 
-    const isValidUrl = (url: string) => {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    };
+
 
     const renderField = (field: keyof Omit<PasswordInfo, 'id'>) => {
         const value = passwordInfo[field];
@@ -149,6 +161,7 @@ const PasswordInfoCard = ({ id, userId, siteName, siteURL, username, password }:
                                 Cancel
                             </Button>
                             <Button
+                                disabled={isPending}
                                 onClick={handleSave}
                                 className="flex items-center gap-2"
                             >
